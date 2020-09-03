@@ -14,7 +14,7 @@ import java.util.Properties;
 
 public class KafkaQuickStartConsumer {
 
-    private static String BOOTSTRAP_SERVERS_CONFIG = "localhost:9092";
+    private static String BOOTSTRAP_SERVERS_CONFIG = "my-kafka:9092";
     private static String GROUP_ID_CONFIG = "quickstart-group";
     private static String TOPIC_NAME = "quickstart-topic";
 
@@ -40,11 +40,11 @@ public class KafkaQuickStartConsumer {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000L));
                 for (TopicPartition topicPartition : records.partitions()) {
                     Iterator<ConsumerRecord<String, String>> it = records.records(topicPartition).iterator();
-                    System.out.println(String.format("consumed kafka topic is : %s",topicPartition.topic()));
+                    System.err.println(String.format("consumed kafka topic is : %s",topicPartition.topic()));
 
                     while (it.hasNext()) {
                         ConsumerRecord<String, String> consumerRecord = it.next();
-                        System.out.println(String.format("consumer kafka message = > " +
+                        System.err.println(String.format("consumer kafka message = > " +
                                         "[key : %s, value : %s, offset: %d]",
                                 consumerRecord.key(),
                                 consumerRecord.value(),
