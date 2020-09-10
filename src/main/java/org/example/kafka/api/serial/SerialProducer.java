@@ -1,6 +1,5 @@
-package org.example.kafka.api.interceptor;
+package org.example.kafka.api.serial;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -10,23 +9,21 @@ import org.example.kafka.api.User;
 import java.util.Properties;
 import java.util.Random;
 
-public class InterceptorProducer {
+public class SerialProducer {
 
     private static String BOOTSTRAP_SERVERS_CONFIG = "localhost:9092";
-    private static String CLIENT_ID_CONFIG = "interceptor-producer";
-    private static Long id = 1000L;
+    private static String CLIENT_ID_CONFIG = "serial-producer";
     private static String[] names = {"jack", "rose" ,"jens"};
-    private static String TOPIC_NAME = "interceptor-topic";
+    private static String TOPIC_NAME = "serial-topic";
 
     public static void main(String[] args) {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, CLIENT_ID_CONFIG);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        // add custom interceptor
-        properties.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,MyProducerInterceptor.class.getName());
-        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+//        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UserSerializer.class.getName());
+        KafkaProducer<String, User> producer = new KafkaProducer<>(properties);
 
         try {
             for (int i = 0;i < 10;i++) {
@@ -44,10 +41,10 @@ public class InterceptorProducer {
      * 随机生成user对象
      * @return
      */
-    private static ProducerRecord<String, String> generateUser(int i) {
+    private static ProducerRecord<String, User> generateUser(int i) {
         User user = new User();
         user.setId("00"+i);
         user.setName(names[new Random().nextInt(names.length)]);
-        return new ProducerRecord<>(TOPIC_NAME, JSON.toJSONString(user));
+        return new ProducerRecord<>(TOPIC_NAME, user);
     }
 }

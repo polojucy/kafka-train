@@ -41,9 +41,10 @@ public class KafkaQuickStartProducer {
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
+        long i = 100;
         try {
             while (true) {
-                producer.send(generateUser());
+                producer.send(generateUser(i++));
                 // 同步send
 //                Future<RecordMetadata> future = producer.send(generateUser());
 //                RecordMetadata metadata = future.get();
@@ -73,9 +74,9 @@ public class KafkaQuickStartProducer {
      * 随机生成user对象
      * @return
      */
-    private static ProducerRecord<String, String> generateUser() {
+    private static ProducerRecord<String, String> generateUser(long i) {
         User user = new User();
-        user.setId(id++);
+        user.setId("00"+i);
         user.setName(names[new Random().nextInt(names.length)]);
         return new ProducerRecord<>(TOPIC_NAME, JSON.toJSONString(user));
     }
